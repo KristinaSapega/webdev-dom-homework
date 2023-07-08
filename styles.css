@@ -148,3 +148,30 @@ body {
   .comment-text {
     white-space: pre-line;
   }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(30deg);;
+    }
+    75% {
+      transform: rotate(-30deg);;
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .-loading-like {
+    animation: rotating 2s linear infinite;
+  }
+  .loading-message {
+    background-color: #202020;
+    color: whitesmoke;
+    padding: 10px;
+    margin-top: 50px;
+    text-align: center;
+    font-weight: bold;
+  }

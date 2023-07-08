@@ -8,25 +8,19 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        
-      </ul>
+      <ul class="comments"></ul>
+      <div class="loading-message"></div>
       <div class="add-form">
-        <input
-          type="text" id="name-input"
-          class="add-form-name"
-          placeholder="Введите ваше имя" 
-        />
-        <textarea id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
+        <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя"/>
+        <textarea 
+        id="comment-input"
+        type="textarea"
+        class="add-form-text"
+        placeholder="Введите ваш коментарий"
+        rows="4"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button">Написать</button>
-          
-
         </div>
       </div>
     </div>
@@ -40,17 +34,17 @@ const nameInput = document.querySelector('#name-input');
 const commentInput = document.querySelector('#comment-input');
 const addButton = document.querySelector('.add-form-button');
 const commentsList = document.querySelector('.comments');
-//const likeButtons = document.querySelectorAll('.like-button');
+const loadingMessage = document.querySelector('.loading-message');
+let isLoading = true;
 
+let comments = [];
 
 let getComments = () => {
-  const fetchPromise = fetch ("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", 
-  {
+  fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
     method: "GET",
-  });
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json ();
-    jsonPromise.then((responseData) => {
+  })
+    .then((response) => response.json())
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         return {
           id: comment.id,
@@ -62,22 +56,31 @@ let getComments = () => {
         };
       });
       comments = appComments;
+      isLoading = false;
       renderComments();
-    });
-  });
+    })
 };
 
 getComments();
 
 
-let comments = [];
+function showLoadingMessage() {
+  if (isLoading) {
+    loadingMessage.textContent = "Пожалуйста, подождите, загружаю комментарии...";
+    loadingMessage.style.display = 'block';
+  } else {
+    loadingMessage.style.display = 'none';
+  }
+}
 
   const renderComments = () => {
   commentsList.innerHTML = "";
+  showLoadingMessage();
+  
 
-    comments.forEach((comment) => {
-    const newComment = document.createElement("li");
-    newComment.classList.add("comment");
+  comments.forEach((comment) => {
+  const newComment = document.createElement("li");
+  newComment.classList.add("comment");
   
   const likeButtonClass = comment.liked ? "like-button -active-like" : "like-button";
 
@@ -175,13 +178,19 @@ let comments = [];
   });
 };
 
-//renderComments();
 
 addButton.addEventListener('click', function() {
   if (nameInput.value.trim() === '' || commentInput.value.trim() === '') {
     alert('Заполните все поля ввода!');
     return;
   }
+// Скрытие формы добавления комментария и отображение сообщения "Комментарий добавляется ..."
+  nameInput.disabled = true;
+  commentInput.disabled = true;
+  addButton.disabled = true;
+  loadingMessage.textContent = "Комментарий добавляется...";
+  
+
   const now = new Date();
   const dateString = `${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
@@ -205,38 +214,45 @@ addButton.addEventListener('click', function() {
   //comments.push(newComment);
   //renderComments();
 
+  addButton.disabled = true;
+  addButton.textContent = "Элемент добавляется...";
+
   // Отправляем новый комментарий на сервер через POST-запрос
   function addComments() {
-    fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInput.value,
-        text: commentInput.value,
-      })
-    }).then((response) => {
-      response.json().then((responseData) => {
-        fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments").then((response) => {
-          response.json().then((responseData) => {
-            comments = responseData.comments;
-            //получаем все комментарии, включая новый
-            getComments();
-          });
-        });
-      });
+  fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInput.value,
+      text: commentInput.value,
+    }),
+  })
+    .then((response) => response.json())
+    .then((responseData) => {
+      return fetch("https://wedev-api.sky.pro/api/v1/kristina-sapega/comments");
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      comments = responseData.comments;
+      getComments();
+      //не забываем вернуть возможность оставлять комментарий
+      nameInput.disabled = false;
+      commentInput.disabled = false;
+      addButton.disabled = false;
+      addButton.textContent = 'Добавить';
+      loadingMessage.style.display = 'none';
     });
   }
-  addComments();
-  
 
+addComments();
+renderComments();
 
-
-  
-
-  // очищаем поля ввода
-  nameInput.value = "";
-  commentInput.value = "";
+// очищаем поля ввода
+nameInput.value = "";
+commentInput.value = "";
 });
 
+//TODO: Рендерим комментарий впервые, чтобы показать надпись "Загружаю комментарии"
+renderComments();
 
   
     //console.log("It works!");
