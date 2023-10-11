@@ -2,11 +2,8 @@
 
 const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
 
-let token = "bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-
-token = null;
-
-export const getComments = () => {
+//get-запрос к серверу для получения комментариев
+export const getCommentsRequest = (token) => {
   return fetch(host, {
     method: 'GET',
     headers: {
@@ -36,7 +33,7 @@ export const getComments = () => {
       return appComments;
     });
 };
-
+//post-запрос, чтобы добавить комментарии
 export const addCommentRequest = ({text}) => {
   //console.log(newComment);
   return fetch(host, {
@@ -56,6 +53,7 @@ export const addCommentRequest = ({text}) => {
   });
 };
 
+//post-запрос, чтобы авторизовать пользователя
 export function loginUser ({login, password}) {
   return fetch(" https://wedev-api.sky.pro/api/user/login", {
     method:"POST",
@@ -72,13 +70,14 @@ export function loginUser ({login, password}) {
   });
 };
 
-export function registerUser ({login, password, name}) {
+//post-запрос, чтобы зарегистрировать пользователя
+export function registerUser ({name, login, password}) {
   return fetch("https://wedev-api.sky.pro/api/user", {
     method:'post',
     body: JSON.stringify({
-      login,
-      password,
       name,
+      login,
+      password
     }),
   }).then((response) => {
     if (response.status === 400) {

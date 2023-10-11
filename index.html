@@ -8,40 +8,14 @@
 
   <body>
 
-    <div id="app"></div>
-
-    <div class="container">
+    <div id="app" class="container">
       <ul class="comments"></ul>
       <div class="loading-message"></div>
-      <div class="add-form">
-        <input type="text" id="name-input" class="add-form-name" placeholder="Введите ваше имя"/>
-        <textarea 
-        id="comment-input"
-        type="textarea"
-        class="add-form-text"
-        placeholder="Введите ваш коментарий"
-        rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
-        </div>
-      </div>
+      <div class="login"></div>
     </div>
 
-    <div class="login-container">
-      <h2>ФОРМА ВХОДА</h2>
-      <form action="#">
-        <div class="input-group">
-          <label for="username">ЛОГИН</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-        <div class="input-group">
-          <label for="password">ПАРОЛЬ</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn">ВОЙТИ</button>
-      </form>
-    </div>
+    <div id="form-container"></div>
+
     <script type="module" src ="./main.js"></script>
   </body>
     
