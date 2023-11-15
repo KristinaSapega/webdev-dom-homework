@@ -1,12 +1,9 @@
-// api.js
+import { getToken } from "./store.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
 
-let token = "bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
-
-token = null;
-
-export const getComments = () => {
+//get-запрос к серверу для получения комментариев
+export const getCommentsRequest = (token) => {
   return fetch(host, {
     method: 'GET',
     headers: {
@@ -36,8 +33,8 @@ export const getComments = () => {
       return appComments;
     });
 };
-
-export const addCommentRequest = ({text}) => {
+//post-запрос, чтобы добавить комментарии
+export const addCommentRequest = ({ text }) => {
   //console.log(newComment);
   return fetch(host, {
     method: 'POST',
@@ -45,7 +42,7 @@ export const addCommentRequest = ({text}) => {
       text,
     }),
     headers:
-    {Authorization : `Bearer ${token}`},
+      { Authorization: getToken () },
   }).then((response) => {
     if (response.status === 400) {
       throw new Error('Неверный запрос');
@@ -56,33 +53,36 @@ export const addCommentRequest = ({text}) => {
   });
 };
 
-export function loginUser ({login, password}) {
+//post-запрос, чтобы авторизовать пользователя
+export function loginUser({ login, password }) {
   return fetch(" https://wedev-api.sky.pro/api/user/login", {
-    method:"POST",
+    method: "POST",
     body: JSON.stringify({
       login,
       password
     }),
   }).then((response) => {
-    if (response.status === 400){
-      throw new Error ('Введен неправильно логин или пароль') ;
+    if (response.status === 400) {
+      throw new Error('Введен неправильно логин или пароль');
     } else {
       return response.json();
     }
   });
 };
 
-export function registerUser ({login, password, name}) {
+//post-запрос, чтобы зарегистрировать пользователя
+export function registerUser({ name, login, password }) {
   return fetch("https://wedev-api.sky.pro/api/user", {
-    method:'post',
+    method: 'post',
     body: JSON.stringify({
-      login,
-      password,
       name,
+      login,
+      password
     }),
   }).then((response) => {
+    console.log(response.status);
     if (response.status === 400) {
-      throw new Error("Пользователь с таким логином уже сущетсвуе");
+      throw new Error("Пользователь с таким логином уже сущетсвует");
     } else {
       return response.json();
     }
