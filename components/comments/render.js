@@ -66,6 +66,7 @@ function likeInitEvent(comments) {
       } else {
         comment.likes++;
       }
+      
       comment.liked = !comment.liked;
       // Обновляем список комментариев на странице
 
