@@ -1,8 +1,6 @@
-//addCommentForm.js
-
-import {addCommentRequest, getCommentsRequest} from "../../api.js";
-import {renderComments} from "./render.js";
-import {setComments} from "./index.js";
+import { addCommentRequest, getCommentsRequest } from "../../api.js";
+import { renderComments } from "./render.js";
+import { setComments } from "./index.js";
 
 
 
@@ -50,9 +48,8 @@ export function renderAddCommentForm(app) {
 
         // Создание нового комментария
         const now = new Date();
-        const dateString = `${now.getDate()}.${
-            now.getMonth() + 1
-        }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+        const dateString = `${now.getDate()}.${now.getMonth() + 1
+            }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
             name: nameInput.value,
@@ -65,45 +62,74 @@ export function renderAddCommentForm(app) {
         // Отправляем новый комментарий на сервер через POST-запрос
         addCommentRequest(newComment)
             .then(() => {
-                getCommentsRequest().then((responseData) => {
+                getCommentsRequest()
+                .then((responseData) => {
                     setComments(responseData);
 
                     renderComments(commentsList, getCommentsRequest());
+                    // Очистка полей ввода и включение элементов формы
+                    nameInput.value = '';
+                    commentInput.value = '';
+                    nameInput.disabled = false;
+                    commentInput.disabled = false;
+                    addButton.disabled = false;
+                    addButton.textContent = 'Добавить';
+                    loadingMessage.style.display = 'none';
+                })
+                .catch((error) => {
+                    // Обработка ошибок при добавлении комментария
+                    console.log(error);
+                    nameInput.disabled = false;
+                    commentInput.disabled = false;
+                    addButton.disabled = false;
+                    addButton.textContent = 'Добавить';
+                    loadingMessage.style.display = 'none';
+
+                    if (error.message === 'Ошибка сервера') {
+                        alert('Сервер сломался, попробуй позже');
+                        return;
+                    }
+                    if (error.message === 'Неверный запрос') {
+                        alert('Имя и комментарий должны быть не короче трех символов');
+                        return;
+                    }
+                    alert('Отсутствует интернет-соединение');
                 });
+
             })
-            .then(() => {
-                // const updatedComments = responseData.comments; // Получаем обновленный массив комментариев
+        // .then(() => {
+        //     //const updatedComments = responseData.comments; // Получаем обновленный массив комментариев
 
-                // Обновляем список комментариев на странице
-                // renderComments(commentsList, updatedComments);
+        //     // Обновляем список комментариев на странице
+        //     //renderComments(commentsList, updatedComments);
 
-                // Очистка полей ввода и включение элементов формы
-                nameInput.value = '';
-                commentInput.value = '';
-                nameInput.disabled = false;
-                commentInput.disabled = false;
-                addButton.disabled = false;
-                addButton.textContent = 'Добавить';
-                loadingMessage.style.display = 'none';
-            })
-            .catch((error) => {
-                // Обработка ошибок при добавлении комментария
-                console.log(error);
-                nameInput.disabled = false;
-                commentInput.disabled = false;
-                addButton.disabled = false;
-                addButton.textContent = 'Добавить';
-                loadingMessage.style.display = 'none';
+        //     // Очистка полей ввода и включение элементов формы
+        //     nameInput.value = '';
+        //     commentInput.value = '';
+        //     nameInput.disabled = false;
+        //     commentInput.disabled = false;
+        //     addButton.disabled = false;
+        //     addButton.textContent = 'Добавить';
+        //     loadingMessage.style.display = 'none';
+        // })
+        // .catch((error) => {
+        //     // Обработка ошибок при добавлении комментария
+        //     console.log(error);
+        //     nameInput.disabled = false;
+        //     commentInput.disabled = false;
+        //     addButton.disabled = false;
+        //     addButton.textContent = 'Добавить';
+        //     loadingMessage.style.display = 'none';
 
-                if (error.message === 'Ошибка сервера') {
-                    alert('Сервер сломался, попробуй позже');
-                    return;
-                }
-                if (error.message === 'Неверный запрос') {
-                    alert('Имя и комментарий должны быть не короче трех символов');
-                    return;
-                }
-                alert('Отсутствует интернет-соединение');
-            });
+        //     if (error.message === 'Ошибка сервера') {
+        //         alert('Сервер сломался, попробуй позже');
+        //         return;
+        //     }
+        //     if (error.message === 'Неверный запрос') {
+        //         alert('Имя и комментарий должны быть не короче трех символов');
+        //         return;
+        //     }
+        //     alert('Отсутствует интернет-соединение');
+        // });
     });
 }

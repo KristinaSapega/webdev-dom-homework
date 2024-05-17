@@ -4,8 +4,8 @@ export const renderComments = (app, comments) => {
 
   app.innerHTML = comments
     .map((comment) => {
-      // const newComment = document.createElement('li');
-      // newComment.classList.add('comment');
+      const newComment = document.createElement('li');
+      newComment.classList.add('comment');
 
       const likeButtonClass = comment.liked ? 'like-button -active-like' : 'like-button';
 
@@ -40,7 +40,7 @@ export const renderComments = (app, comments) => {
 
 
 // Ответ на коммент
-function replyInitEvent(newComment, comment) {
+export function replyInitEvent(newComment, comment) {
   newComment.addEventListener('click', (event) => {
     event.stopPropagation();
     const nameInput = document.querySelector('#name-input');
@@ -52,26 +52,41 @@ function replyInitEvent(newComment, comment) {
   });
 }
 // Лайк
-function likeInitEvent(comments) {
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach((button) => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
+// function likeInitEvent() {
+//   const likeButtons = document.querySelectorAll('.like-button');
+//   likeButtons.forEach((button) => {
+//     button.addEventListener('click', async (event) => {
+//       event.stopPropagation();
 
-      const commentId = parseInt(button.dataset.commentId);
-      const comment = comments.find((c) => c.id === commentId);
+//       const commentId = parseInt(button.dataset.commentId);
+      
+//       try {
+//         const result = await toggleLike(commentId, token);
+//         const comment = comments.find((c) => c.id === commentId);
 
-      if (comment.liked) {
-        comment.likes--;
-      } else {
-        comment.likes++;
-      }
-      comment.liked = !comment.liked;
-      // Обновляем список комментариев на странице
+//         comment.likes = result.result.likes;
+//         comment.liked = result.result.isLiked;
 
-      const commentsList = document.querySelector('.comments');
+//         const commentsList = document.querySelector('.comments');
+//         renderComments(commentsList, comments);
+//       } catch (error) {
+//         console.error('Ошибка при переключении лайка:', error);
+//       }
+      
 
-      renderComments(commentsList, comments);
-    });
-  });
-}
+//       if (comment.liked) {
+//         comment.likes--;
+//       } else {
+//         comment.likes++;
+//       }
+//       comment.liked = !comment.liked;
+//       //Обновляем список комментариев на странице
+
+//       const commentsList = document.querySelector('.comments');
+//       renderComments(commentsList, comments); 
+     
+//     });
+//   });
+// }
+// likeInitEvent();
+   

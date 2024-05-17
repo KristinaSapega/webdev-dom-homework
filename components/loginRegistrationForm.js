@@ -1,6 +1,6 @@
-//loginRegistrationForm.js
-
 import { loginUser, registerUser } from "../api.js";
+import { main, setToken } from "../main.js";
+
 
 let isLoginMode = false;
 
@@ -51,7 +51,8 @@ id="password-input"
             })
                 .then((user) => {
                     setToken(`Bearer ${user.user.token}`);
-                    renderApp();
+                    //renderApp();
+                    main();
                 })
                 .catch((error) => {
                     alert(error.message);
@@ -83,7 +84,8 @@ id="password-input"
             })
                 .then((user) => {
                     setToken(`Bearer ${user.user.token}`);
-                    renderApp();
+                    //renderApp();
+                    main();
                 })
                 .catch((error) => {
                     alert(error.message);

@@ -1,8 +1,8 @@
-// api.js
+import { getToken } from "./main.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
 
-//get-запрос к серверу для получения комментариев
+
 export const getCommentsRequest = (token) => {
   return fetch(host, {
     method: 'GET',
@@ -33,47 +33,45 @@ export const getCommentsRequest = (token) => {
       return appComments;
     });
 };
-//post-запрос, чтобы добавить комментарии
-export const addCommentRequest = ({text}) => {
+
+export const addCommentRequest = async ({ text }) => {
   //console.log(newComment);
-  return fetch(host, {
+  const response = await fetch(host, {
     method: 'POST',
     body: JSON.stringify({
       text,
     }),
-    headers:
-    {Authorization : `Bearer ${token}`},
-  }).then((response) => {
-    if (response.status === 400) {
-      throw new Error('Неверный запрос');
-    } else if (response.status === 500) {
-      throw new Error('Ошибка сервера');
-    }
-    return response.json();
+    headers: { Authorization: `Bearer ${getToken()}` },
   });
+  if (response.status === 400) {
+    throw new Error('Неверный запрос');
+  } else if (response.status === 500) {
+    throw new Error('Ошибка сервера');
+  }
+  return await response.json();
 };
 
-//post-запрос, чтобы авторизовать пользователя
-export function loginUser ({login, password}) {
+
+export function loginUser({ login, password }) {
   return fetch(" https://wedev-api.sky.pro/api/user/login", {
-    method:"POST",
+    method: "POST",
     body: JSON.stringify({
       login,
       password
     }),
   }).then((response) => {
-    if (response.status === 400){
-      throw new Error ('Введен неправильно логин или пароль') ;
+    if (response.status === 400) {
+      throw new Error('Введен неправильно логин или пароль');
     } else {
       return response.json();
     }
   });
 };
 
-//post-запрос, чтобы зарегистрировать пользователя
-export function registerUser ({name, login, password}) {
+
+export function registerUser({ name, login, password }) {
   return fetch("https://wedev-api.sky.pro/api/user", {
-    method:'post',
+    method: 'POST',
     body: JSON.stringify({
       name,
       login,
@@ -81,9 +79,27 @@ export function registerUser ({name, login, password}) {
     }),
   }).then((response) => {
     if (response.status === 400) {
-      throw new Error("Пользователь с таким логином уже сущетсвуе");
+      throw new Error("Пользователь с таким логином уже сущетсвует");
     } else {
       return response.json();
     }
   });
 };
+
+export function toggleLike(commentId, token) {
+  return fetch("https://wedev-api.sky.pro/api/comments/:id/toggle-like", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'aplication/json',
+      'Authorization': `Bearer ${getToken()}`
+    }
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = response.json();
+    return result;
+  }
+  )
+}
