@@ -67,6 +67,7 @@ export function renderAddCommentForm(app) {
                     setComments(responseData);
 
                     renderComments(commentsList, getCommentsRequest());
+                    
                     // Очистка полей ввода и включение элементов формы
                     nameInput.value = '';
                     commentInput.value = '';

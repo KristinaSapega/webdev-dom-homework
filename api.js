@@ -3,35 +3,31 @@ import { getToken } from "./main.js";
 const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
 
 
-export const getCommentsRequest = (token) => {
-  return fetch(host, {
+export const getCommentsRequest = async (token) => {
+  const response = await fetch(host, {
     method: 'GET',
     headers: {
       Authorization: token,
     }
-  })
-    .then((response) => {
-      if (response.status === 401) {
-        throw new Error('Ошибка при авторизвции');
-      }
-      if (response.status === 500) {
-        throw new Error("Произошла ошибка сервера");
-      }
-      return response.json();
-    })
-    .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          id: comment.id,
-          name: comment.author.name,
-          date: new Date(comment.date), // Преобразование строки даты в объект Date
-          text: comment.text,
-          likes: comment.likes,
-          liked: false,
-        };
-      });
-      return appComments;
-    });
+  });
+  if (response.status === 401) {
+    throw new Error('Ошибка при авторизвции');
+  }
+  if (response.status === 500) {
+    throw new Error("Произошла ошибка сервера");
+  }
+  const responseData = await response.json();
+  const appComments = responseData.comments.map((comment) => {
+    return {
+      id: comment.id,
+      name: comment.author.name,
+      date: new Date(comment.date), // Преобразование строки даты в объект Date
+      text: comment.text,
+      likes: comment.likes,
+      liked: false,
+    };
+  });
+  return appComments;
 };
 
 export const addCommentRequest = async ({ text }) => {
