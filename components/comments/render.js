@@ -1,11 +1,12 @@
-
+//import { deleteComment } from "../../api";
+//import { toggleLike } from "../../api";
 
 export const renderComments = (app, comments) => {
 
   app.innerHTML = comments
     .map((comment) => {
-      // const newComment = document.createElement('li');
-      // newComment.classList.add('comment');
+      const newComment = document.createElement('li');
+      newComment.classList.add('comment');
 
       const likeButtonClass = comment.liked ? 'like-button -active-like' : 'like-button';
 
@@ -27,6 +28,9 @@ export const renderComments = (app, comments) => {
                 <div class="edit-buttons">
             <button class="edit-button" data-comment-id="${comment.id}">Редактировать</button>
               </div>
+              <div class="delete-buttons">
+            <button class="delete-button" data-comment-id="${comment.id}">Удалить</button>
+              </div>
             </div>
            </li>
           `;
@@ -38,41 +42,26 @@ export const renderComments = (app, comments) => {
 //replyInitEvent(newComment, comment);
 //likeInitEvent(comments);
 
+// const deleteButtons = app.querySelectorAll('.delete-button');
+//   deleteButtons.forEach(button => {
+//     button.addEventListener('click', async (event) => {
+//       const commentId = button.getAttribute('data-comment-id');
+//       try {
+//         await deleteComment({ id: commentId });
+//         // Обновляем список комментариев после удаления
+//         const updatedComments = await getCommentsRequest(getToken());
+//         renderComments(app, updatedComments);
+//       } catch (error) {
+//         console.error('Ошибка при удалении комментария:', error);
+//       }
+//     });
+//   });
+
 
 // Ответ на коммент
-function replyInitEvent(newComment, comment) {
+export function replyInitEvent(newComment, comment) {
   newComment.addEventListener('click', (event) => {
     event.stopPropagation();
     const nameInput = document.querySelector('#name-input');
     const commentInput = document.querySelector('#comment-input');
-    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
-    nameInput.value = '';
-    commentInput.value = `@${comment.name}, ${comment.text}:`;
-    commentInput.focus();
-  });
-}
-// Лайк
-function likeInitEvent(comments) {
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach((button) => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-
-      const commentId = parseInt(button.dataset.commentId);
-      const comment = comments.find((c) => c.id === commentId);
-
-      if (comment.liked) {
-        comment.likes--;
-      } else {
-        comment.likes++;
-      }
-      
-      comment.liked = !comment.liked;
-      // Обновляем список комментариев на странице
-
-      const commentsList = document.querySelector('.comments');
-
-      renderComments(commentsList, comments);
-    });
-  });
-}
+    // При клике на комментарий, заполняем поля формы

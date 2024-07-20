@@ -192,6 +192,17 @@ body {
   border-radius: 18px;
   cursor: pointer;
 }
+
+.delete-button {
+  margin-left: 20px;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
 .comment-text {
   white-space: pre-line;
 }
@@ -225,15 +236,4 @@ body {
 
 .login-button {
   background-color: #bcec30;
-  margin-top: 20px;
-  font-size: 24px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 18px;
-  cursor: pointer;
-}
-
-.login-text {
-  text-align: center;
-  font-size: 24px;
-}
+  margin

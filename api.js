@@ -1,59 +1,57 @@
-import { getToken } from "./store.js";
+import { setComments } from "./components/comments/index.js";
+import { getToken } from "./main.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
 
-//get-запрос к серверу для получения комментариев
-export const getCommentsRequest = (token) => {
-  return fetch(host, {
+
+export const getCommentsRequest = async (token) => {
+  const response = await fetch(host, {
     method: 'GET',
     headers: {
       Authorization: token,
     }
-  })
-    .then((response) => {
-      if (response.status === 401) {
-        throw new Error('Ошибка при авторизвции');
-      }
-      if (response.status === 500) {
-        throw new Error("Произошла ошибка сервера");
-      }
-      return response.json();
-    })
-    .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        return {
-          id: comment.id,
-          name: comment.author.name,
-          date: new Date(comment.date), // Преобразование строки даты в объект Date
-          text: comment.text,
-          likes: comment.likes,
-          liked: false,
-        };
-      });
-      return appComments;
-    });
+  });
+  if (response.status === 401) {
+    throw new Error('Ошибка при авторизвции');
+  }
+  if (response.status === 500) {
+    throw new Error("Произошла ошибка сервера");
+  }
+  const responseData = await response.json();
+  const appComments = responseData.comments.map((comment) => {
+    return {
+      id: comment.id,
+      name: comment.author.name,
+      date: new Date(comment.date), // Преобразование строки даты в объект Date
+      text: comment.text,
+      likes: comment.likes,
+      liked: false,
+    };
+  });
+
+  //setComments(appComments);
+  console.log (appComments)
+  return appComments;
 };
-//post-запрос, чтобы добавить комментарии
-export const addCommentRequest = ({ text }) => {
+
+export const addCommentRequest = async ({ text }) => {
   //console.log(newComment);
-  return fetch(host, {
+  const response = await fetch(host, {
     method: 'POST',
     body: JSON.stringify({
       text,
     }),
-    headers:
-      { Authorization: getToken () },
-  }).then((response) => {
-    if (response.status === 400) {
-      throw new Error('Неверный запрос');
-    } else if (response.status === 500) {
-      throw new Error('Ошибка сервера');
-    }
-    return response.json();
+    headers: { Authorization: `Bearer ${getToken()}` },
   });
+  if (response.status === 400) {
+    throw new Error('Неверный запрос');
+  } else if (response.status === 500) {
+    throw new Error('Ошибка сервера');
+  }
+  return await response.json();
 };
 
-//post-запрос, чтобы авторизовать пользователя
+
 export function loginUser({ login, password }) {
   return fetch(" https://wedev-api.sky.pro/api/user/login", {
     method: "POST",
@@ -70,17 +68,16 @@ export function loginUser({ login, password }) {
   });
 };
 
-//post-запрос, чтобы зарегистрировать пользователя
+
 export function registerUser({ name, login, password }) {
   return fetch("https://wedev-api.sky.pro/api/user", {
-    method: 'post',
+    method: 'POST',
     body: JSON.stringify({
       name,
       login,
       password
     }),
   }).then((response) => {
-    console.log(response.status);
     if (response.status === 400) {
       throw new Error("Пользователь с таким логином уже сущетсвует");
     } else {
@@ -88,3 +85,16 @@ export function registerUser({ name, login, password }) {
     }
   });
 };
+
+
+export async function toggleLike(commentId) {
+  const response = await fetch(`https://wedev-api.sky.pro/api/comments/${commentId}/toggle-like`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const result = 
