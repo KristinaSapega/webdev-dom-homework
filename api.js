@@ -97,4 +97,25 @@ export async function toggleLike(commentId) {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  const result = 
+  const result = response.json();
+  return await result;
+};
+
+export async function deleteComment({id }) {
+  const response = await fetch(`https://wedev-api.sky.pro/api/comments/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    }
+    });
+  if (response.status === 401) {
+    throw new Error('Ошибка авторизации');
+  } else if (response.status === 500) {
+    throw new Error('Ошибка сервера');
+  } else if (response.status === 404) {
+    throw new Error('Комментарий не найден');
+  }
+    return response.json();
+  }
+
+

@@ -29,4 +29,15 @@ function showLoadingMessage() {
     loadingMessage.textContent = 'Пожалуйста, подождите, загружаю комментарии...';
     loadingMessage.style.display = 'block';
   } else {
-    loadingMessage.style.di
+    loadingMessage.style.display = 'none';
+  }
+}
+
+export const main = () => {
+  app.innerHTML = `<ul class="comments"></ul>
+  <div class="loading-message"></div>
+  <div class="login"></div>`
+  comments(app, token);
+};
+
+main();

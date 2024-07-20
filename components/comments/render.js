@@ -64,4 +64,49 @@ export function replyInitEvent(newComment, comment) {
     event.stopPropagation();
     const nameInput = document.querySelector('#name-input');
     const commentInput = document.querySelector('#comment-input');
-    // При клике на комментарий, заполняем поля формы
+    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+    nameInput.value = '';
+    commentInput.value = `@${comment.name}, ${comment.text}:`;
+    commentInput.focus();
+  });
+}
+
+//Лайк
+function likeInitEvent(comments, token) {
+  const likeButtons = document.querySelectorAll('.like-button');
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      event.stopPropagation();
+
+      const commentId = parseInt(button.dataset.commentId);
+      
+      try {
+        const result = await toggleLike(commentId, token);
+        const comment = comment.find((c) => c.id === commentId);
+
+        comment.likes = result.result.likes;
+        comment.liked = result.result.isLiked;
+
+        const commentsList = document.querySelector('.comments');
+        renderComments(commentsList, comments);
+      } catch (error) {
+        console.error('Ошибка при переключении лайка:', error);
+      }
+      
+
+      if (commentId.liked) {
+        commentId.likes--;
+      } else {
+        commentId.likes++;
+      }
+      commentId.liked = !commentId.liked;
+      //Обновляем список комментариев на странице
+
+      const commentsList = document.querySelector('.comments');
+      renderComments(commentsList, commentId); 
+     
+    });
+  });
+}
+likeInitEvent();
+   
