@@ -1,11 +1,21 @@
-// api.js
-export const getComments = () => {
-  return fetch('https://wedev-api.sky.pro/api/v1/kristina-sapega/comments', {
+import { getToken } from "./store.js";
+
+const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
+
+//get-запрос к серверу для получения комментариев
+export const getCommentsRequest = (token) => {
+  return fetch(host, {
     method: 'GET',
+    headers: {
+      Authorization: token,
+    }
   })
     .then((response) => {
-      if (!response) {
-        throw new Error('Ошибка при получении комментариев');
+      if (response.status === 401) {
+        throw new Error('Ошибка при авторизвции');
+      }
+      if (response.status === 500) {
+        throw new Error("Произошла ошибка сервера");
       }
       return response.json();
     })
@@ -23,15 +33,16 @@ export const getComments = () => {
       return appComments;
     });
 };
-
-export const addCommentRequest = (newComment) => {
-  console.log(newComment);
-  return fetch('https://wedev-api.sky.pro/api/v1/kristina-sapega/comments', {
+//post-запрос, чтобы добавить комментарии
+export const addCommentRequest = ({ text }) => {
+  //console.log(newComment);
+  return fetch(host, {
     method: 'POST',
     body: JSON.stringify({
-      text: newComment.text,
-      name: newComment.name,
+      text,
     }),
+    headers:
+      { Authorization: getToken () },
   }).then((response) => {
     if (response.status === 400) {
       throw new Error('Неверный запрос');
@@ -39,5 +50,41 @@ export const addCommentRequest = (newComment) => {
       throw new Error('Ошибка сервера');
     }
     return response.json();
+  });
+};
+
+//post-запрос, чтобы авторизовать пользователя
+export function loginUser({ login, password }) {
+  return fetch(" https://wedev-api.sky.pro/api/user/login", {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password
+    }),
+  }).then((response) => {
+    if (response.status === 400) {
+      throw new Error('Введен неправильно логин или пароль');
+    } else {
+      return response.json();
+    }
+  });
+};
+
+//post-запрос, чтобы зарегистрировать пользователя
+export function registerUser({ name, login, password }) {
+  return fetch("https://wedev-api.sky.pro/api/user", {
+    method: 'post',
+    body: JSON.stringify({
+      name,
+      login,
+      password
+    }),
+  }).then((response) => {
+    console.log(response.status);
+    if (response.status === 400) {
+      throw new Error("Пользователь с таким логином уже сущетсвует");
+    } else {
+      return response.json();
+    }
   });
 };
