@@ -97,11 +97,12 @@ export async function toggleLike(commentId) {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  const result = response.json();
-  return await result;
+  const result = await response.json();
+  return result;
 };
 
-export async function deleteComment({id }) {
+
+export async function deleteComment({id}) {
   const response = await fetch(`https://wedev-api.sky.pro/api/comments/${id}`, {
     method: "DELETE",
     headers: {

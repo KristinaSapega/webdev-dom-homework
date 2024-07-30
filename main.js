@@ -1,5 +1,3 @@
-
-//import { renderForm } from './components/loginRegistrationForm.js';
 import { comments } from './components/comments/index.js';
 
 

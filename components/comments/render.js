@@ -1,5 +1,7 @@
-//import { deleteComment } from "../../api";
-//import { toggleLike } from "../../api";
+import { deleteComment } from "../../api.js";
+import { toggleLike } from "../../api.js";
+import { token } from "../../main.js";
+
 
 export const renderComments = (app, comments) => {
 
@@ -37,51 +39,61 @@ export const renderComments = (app, comments) => {
     })
     .join('');
 
+  
+  if (token) {
+    replyInitEvent();
+    likeInitEvent(comments);
+  }
+
 };
-// Задаем обработчики для взаимодействия с комментом
-//replyInitEvent(newComment, comment);
-//likeInitEvent(comments);
-
-// const deleteButtons = app.querySelectorAll('.delete-button');
-//   deleteButtons.forEach(button => {
-//     button.addEventListener('click', async (event) => {
-//       const commentId = button.getAttribute('data-comment-id');
-//       try {
-//         await deleteComment({ id: commentId });
-//         // Обновляем список комментариев после удаления
-//         const updatedComments = await getCommentsRequest(getToken());
-//         renderComments(app, updatedComments);
-//       } catch (error) {
-//         console.error('Ошибка при удалении комментария:', error);
-//       }
-//     });
-//   });
 
 
-// Ответ на коммент
-export function replyInitEvent(newComment, comment) {
-  newComment.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const nameInput = document.querySelector('#name-input');
-    const commentInput = document.querySelector('#comment-input');
-    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
-    nameInput.value = '';
-    commentInput.value = `@${comment.name}, ${comment.text}:`;
-    commentInput.focus();
+const deleteButtons = document.querySelectorAll('.delete-button');
+deleteButtons.forEach(button => {
+  button.addEventListener('click', async () => {
+    const commentId = button.getAttribute('data-comment-id');
+    try {
+      await deleteComment({ id: commentId });
+      // Обновляем список комментариев после удаления
+      const updatedComments = await getCommentsRequest(getToken());
+      renderComments(app, updatedComments);
+    } catch (error) {
+      console.error('Ошибка при удалении комментария:', error);
+    }
   });
+});
+
+
+
+export function replyInitEvent() {
+  const comments = document.querySelectorAll('.comment')
+  //console.log(comments)
+  for (const comment of comments) {
+    console.log(comment)
+    comment.addEventListener('click', (event) => {
+      event.stopPropagation();
+      console.log(comment)
+      const nameInput = document.querySelector('#name-input');
+      const commentInput = document.querySelector('#comment-input');
+      // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+      nameInput.value = '';
+      commentInput.value = `@${comment.name}, ${comment.text}:`;
+      commentInput.focus();
+    });
+  }
+
 }
 
-//Лайк
-function likeInitEvent(comments, token) {
+
+function likeInitEvent(comments) {
   const likeButtons = document.querySelectorAll('.like-button');
   likeButtons.forEach((button) => {
     button.addEventListener('click', async (event) => {
       event.stopPropagation();
-
       const commentId = parseInt(button.dataset.commentId);
-      
+
       try {
-        const result = await toggleLike(commentId, token);
+        const result = await toggleLike(commentId);
         const comment = comment.find((c) => c.id === commentId);
 
         comment.likes = result.result.likes;
@@ -89,24 +101,25 @@ function likeInitEvent(comments, token) {
 
         const commentsList = document.querySelector('.comments');
         renderComments(commentsList, comments);
+
       } catch (error) {
         console.error('Ошибка при переключении лайка:', error);
       }
-      
 
-      if (commentId.liked) {
-        commentId.likes--;
-      } else {
-        commentId.likes++;
-      }
-      commentId.liked = !commentId.liked;
+
+      // if (commentId.liked) {
+      //   commentId.likes--;
+      // } else {
+      //   commentId.likes++;
+      // }
+      // commentId.liked = !commentId.liked;
+
       //Обновляем список комментариев на странице
+      // const commentsList = document.querySelector('.comments');
+      // renderComments(commentsList, commentId); 
 
-      const commentsList = document.querySelector('.comments');
-      renderComments(commentsList, commentId); 
-     
     });
   });
 }
-likeInitEvent();
-   
+
+
