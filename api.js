@@ -88,7 +88,7 @@ export function registerUser({ name, login, password }) {
 
 
 export async function toggleLike(commentId) {
-  const response = await fetch(`https://wedev-api.sky.pro/api/comments/${commentId}/toggle-like`, {
+  const response = await fetch(`${host}/${commentId}/toggle-like`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${getToken()}`,
@@ -103,7 +103,7 @@ export async function toggleLike(commentId) {
 
 
 export async function deleteComment({id}) {
-  const response = await fetch(`https://wedev-api.sky.pro/api/comments/${id}`, {
+  const response = await fetch(`${host}/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${getToken()}`,

@@ -34,7 +34,8 @@ function showLoadingMessage() {
 export const main = () => {
   app.innerHTML = `<ul class="comments"></ul>
   <div class="loading-message"></div>
-  <div class="login"></div>`
+  <div class="form"></div>
+  <div class="login"></div>`;
   comments(app, token);
 };
 

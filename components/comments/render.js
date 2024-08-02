@@ -1,6 +1,7 @@
 import { deleteComment } from "../../api.js";
 import { toggleLike } from "../../api.js";
-import { token } from "../../main.js";
+import { getToken, token } from "../../main.js";
+import { getComments } from "./index.js";
 
 
 export const renderComments = (app, comments) => {
@@ -39,87 +40,68 @@ export const renderComments = (app, comments) => {
     })
     .join('');
 
-  
-  if (token) {
-    replyInitEvent();
-    likeInitEvent(comments);
-  }
-
+if (token) {
+  replyInitEvent();
+  likeInitEvent(comments);
+  deleteEventInit();
+}
 };
 
-
+function deleteEventInit() {
 const deleteButtons = document.querySelectorAll('.delete-button');
 deleteButtons.forEach(button => {
-  button.addEventListener('click', async () => {
+  button.addEventListener('click', async (event) => {
+    event.stopPropagation();
     const commentId = button.getAttribute('data-comment-id');
     try {
-      await deleteComment({ id: commentId });
+      await deleteComment({ id: commentId, token: getToken });
       // Обновляем список комментариев после удаления
-      const updatedComments = await getCommentsRequest(getToken());
-      renderComments(app, updatedComments);
+      renderComments(token);
     } catch (error) {
       console.error('Ошибка при удалении комментария:', error);
     }
   });
 });
-
-
+}
 
 export function replyInitEvent() {
-  const comments = document.querySelectorAll('.comment')
-  //console.log(comments)
-  for (const comment of comments) {
-    console.log(comment)
-    comment.addEventListener('click', (event) => {
-      event.stopPropagation();
-      console.log(comment)
-      const nameInput = document.querySelector('#name-input');
-      const commentInput = document.querySelector('#comment-input');
-      // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
-      nameInput.value = '';
-      commentInput.value = `@${comment.name}, ${comment.text}:`;
-      commentInput.focus();
-    });
-  }
-
-}
-
-
-function likeInitEvent(comments) {
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach((button) => {
-    button.addEventListener('click', async (event) => {
-      event.stopPropagation();
-      const commentId = parseInt(button.dataset.commentId);
-
-      try {
-        const result = await toggleLike(commentId);
-        const comment = comment.find((c) => c.id === commentId);
-
-        comment.likes = result.result.likes;
-        comment.liked = result.result.isLiked;
-
-        const commentsList = document.querySelector('.comments');
-        renderComments(commentsList, comments);
-
-      } catch (error) {
-        console.error('Ошибка при переключении лайка:', error);
-      }
-
-
-      // if (commentId.liked) {
-      //   commentId.likes--;
-      // } else {
-      //   commentId.likes++;
-      // }
-      // commentId.liked = !commentId.liked;
-
-      //Обновляем список комментариев на странице
-      // const commentsList = document.querySelector('.comments');
-      // renderComments(commentsList, commentId); 
-
-    });
+const comments = document.querySelectorAll('.comment')
+//console.log(comments)
+for (const comment of comments) {
+  console.log(comment)
+  comment.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const id = comment.dataset.commentId;
+    const data = getComments();
+    const currentComment = data.find((comment) => comment.id === id);
+    const commentInput = document.querySelector('#comment-input');
+    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+    commentInput.value = `@${currentComment.name}, ${currentComment.text}:`;
+    commentInput.focus();
   });
 }
+}
+
+function likeInitEvent(_comments) {
+const likeButtons = document.querySelectorAll('.like-button');
+likeButtons.forEach((button) => {
+  button.addEventListener('click', async (event) => {
+    event.stopPropagation();
+    const commentId = button.dataset.commentId;
+
+    try {
+      await toggleLike(commentId);
+
+      renderComments(token);
+    } catch (error) {
+      console.error('Ошибка при переключении лайка:', error);
+    }
+
+  });
+});
+}
+
+
+
 
 
