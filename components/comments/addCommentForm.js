@@ -34,7 +34,10 @@ export function renderAddCommentForm(app) {
 
     // Обработчик кнопки "Написать"
     addButton.addEventListener('click', () => {
-        if (nameInput.value.trim().length < 3 || commentInput.value.trim().length < 3) {
+        const nameValue = nameInput.value.trim();
+        const commentValue = commentInput.value.trim();
+
+        if (nameValue.length < 3 || commentValue.length < 3) {
             alert('Имя и комментарий должны содержать хотя бы 3 символа!');
             return;
         }
@@ -51,9 +54,9 @@ export function renderAddCommentForm(app) {
             }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
-            name: nameInput.value,
+            name: nameValue,
             date: dateString,
-            text: commentInput.value,
+            text: commentValue,
             likes: 0,
             liked: false,
         };
