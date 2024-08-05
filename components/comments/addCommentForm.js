@@ -2,13 +2,19 @@ import { addCommentRequest, getCommentsRequest } from "../../api.js";
 import { getToken, token } from "../../main.js";
 import { commentsList } from "./list.js";
 
-
-
+function escapeHtml(unsafe) {
+    return unsafe
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
 function getAddCommentFormTemplate() {
     return `
       <div class="add-form">
-        <input type="text" id="name-input" class="add-form-name" value="${token.name}" readonly/>
+        <input type="text" id="name-input" class="add-form-name" value="${escapeHtml(token.name)}" readonly/>
         <textarea 
             id="comment-input"
             type="textarea"
@@ -54,9 +60,9 @@ export function renderAddCommentForm(app) {
             }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
-            name: nameValue,
+            name: escapeHtml(nameValue),
             date: dateString,
-            text: commentValue,
+            text: escapeHtml(commentValue),
             likes: 0,
             liked: false,
         };
