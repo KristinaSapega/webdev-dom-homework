@@ -8,7 +8,7 @@ export const getCommentsRequest = async (token) => {
   const response = await fetch(host, {
     method: 'GET',
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token?.token}`,
     }
   });
   if (response.status === 401) {
@@ -29,7 +29,7 @@ export const getCommentsRequest = async (token) => {
     };
   });
 
-  //setComments(appComments);
+  setComments(appComments);
   console.log (appComments)
   return appComments;
 };
@@ -102,11 +102,11 @@ export async function toggleLike(commentId) {
 };
 
 
-export async function deleteComment({id}) {
+export async function deleteComment({id, token}) {
   const response = await fetch(`${host}/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     }
     });
   if (response.status === 401) {

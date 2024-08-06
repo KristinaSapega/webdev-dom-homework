@@ -14,7 +14,7 @@ function escapeHtml(unsafe) {
 function getAddCommentFormTemplate() {
     return `
       <div class="add-form">
-        <input type="text" id="name-input" class="add-form-name" value="${escapeHtml(token.name)}" readonly/>
+        <input type="text" id="name-input" class="add-form-name" value="${escapeHtml(token?.name)}" readonly/>
         <textarea 
             id="comment-input"
             type="textarea"
@@ -30,20 +30,20 @@ function getAddCommentFormTemplate() {
 }
 
 export function renderAddCommentForm(app) {
-    app.innerHTML += getAddCommentFormTemplate()
+    document.querySelector(".form").innerHTML = getAddCommentFormTemplate();
 
     const nameInput = document.querySelector('#name-input');
     const commentInput = document.querySelector('#comment-input');
     const addButton = document.querySelector('.add-form-button');
     const loadingMessage = document.querySelector('.loading-message');
-    
+
 
     // Обработчик кнопки "Написать"
     addButton.addEventListener('click', () => {
-        const nameValue = nameInput.value.trim();
-        const commentValue = commentInput.value.trim();
-
-        if (nameValue.length < 3 || commentValue.length < 3) {
+        if (
+            nameInput.value.trim().length < 3 ||
+            commentInput.value.trim().length < 3
+        ) {
             alert('Имя и комментарий должны содержать хотя бы 3 символа!');
             return;
         }
@@ -70,38 +70,36 @@ export function renderAddCommentForm(app) {
         // Отправляем новый комментарий на сервер через POST-запрос
         addCommentRequest(newComment)
             .then(() => {
-                
-                    const element = document.querySelector('.container');
-                    commentsList(element, getToken());
-                    
-                    // Очистка полей ввода и включение элементов формы
-                    nameInput.value = '';
-                    commentInput.value = '';
-                    nameInput.disabled = false;
-                    commentInput.disabled = false;
-                    addButton.disabled = false;
-                    addButton.textContent = 'Добавить';
-                    loadingMessage.style.display = 'none';
-                })
-                .catch((error) => {
-                    // Обработка ошибок при добавлении комментария
-                    console.log(error);
-                    nameInput.disabled = false;
-                    commentInput.disabled = false;
-                    addButton.disabled = false;
-                    addButton.textContent = 'Добавить';
-                    loadingMessage.style.display = 'none';
+                const element = document.querySelector('.container');
+                commentsList(element, getToken());
 
-                    if (error.message === 'Ошибка сервера') {
-                        alert('Сервер сломался, попробуй позже');
-                        return;
-                    }
-                    if (error.message === 'Неверный запрос') {
-                        alert('Имя и комментарий должны быть не короче трех символов');
-                        return;
-                    }
-                    alert('Отсутствует интернет-соединение');
-                });
+                // Очистка полей ввода и включение элементов формы
+                nameInput.value = '';
+                commentInput.value = '';
+                nameInput.disabled = false;
+                commentInput.disabled = false;
+                addButton.disabled = false;
+                addButton.textContent = 'Добавить';
+                loadingMessage.style.display = 'none';
+            })
+            .catch((error) => {
+                // Обработка ошибок при добавлении комментария
+                console.log(error);
+                nameInput.disabled = false;
+                commentInput.disabled = false;
+                addButton.disabled = false;
+                addButton.textContent = 'Добавить';
+                loadingMessage.style.display = 'none';
 
+                if (error.message === 'Ошибка сервера') {
+                    alert('Сервер сломался, попробуй позже');
+                    return;
+                }
+                if (error.message === 'Неверный запрос') {
+                    alert('Имя и комментарий должны быть не короче трех символов');
+                    return;
+                }
+                alert('Отсутствует интернет-соединение');
             });
-}
+    });
+}       

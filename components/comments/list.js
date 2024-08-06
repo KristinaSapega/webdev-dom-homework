@@ -1,7 +1,7 @@
 import { getCommentsRequest } from '../../api.js';
 import { renderComments } from './render.js';
 
-const commentsList = async (app, token) => {
+const commentsList = async (token) => {
     const commentsListNode = app.querySelector('.comments'); //commentsListNode-контейнер для отображения комментариев
 
     let isLoading = true;
