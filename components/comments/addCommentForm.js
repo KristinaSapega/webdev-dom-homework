@@ -60,9 +60,9 @@ export function renderAddCommentForm(app) {
             }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
-            name: escapeHtml(nameValue),
+            name: escapeHtml(nameInput.value),
             date: dateString,
-            text: escapeHtml(commentValue),
+            text: escapeHtml(commentInput.value),
             likes: 0,
             liked: false,
         };
@@ -74,7 +74,7 @@ export function renderAddCommentForm(app) {
                 commentsList(element, getToken());
 
                 // Очистка полей ввода и включение элементов формы
-                nameInput.value = '';
+                //nameInput.value = '';
                 commentInput.value = '';
                 nameInput.disabled = false;
                 commentInput.disabled = false;

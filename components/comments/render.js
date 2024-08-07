@@ -17,7 +17,7 @@ export const renderComments = (app, comments) => {
       const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
       return `<li class='comment' data-comment-id="${comment.id}">
             <div class="comment-header">
-              <div>${comment.name}</div>
+              <div>${escapeHtml(comment.name)}</div>
               <div>${dateAndTime}</div>
             </div>
             <div class="comment-body">
