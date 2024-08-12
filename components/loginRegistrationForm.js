@@ -35,12 +35,12 @@ id="password-input"
         if (isLoginMode) {
             const login = document.getElementById("login-input").value;
             const password = document.getElementById("password-input").value;
-            if (!login.trim()) {
+            if (!login) {
                 alert("Введите логин");
                 return;
             }
 
-            if (!password.trim()) {
+            if (!password) {
                 alert("Введите пароль");
                 return;
             }

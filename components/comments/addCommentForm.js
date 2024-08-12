@@ -60,9 +60,9 @@ export function renderAddCommentForm(app) {
             }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
-            name: escapeHtml(nameInput.value),
+            name: nameInput.value,
             date: dateString,
-            text: escapeHtml(commentInput.value),
+            text: commentInput.value,
             likes: 0,
             liked: false,
         };

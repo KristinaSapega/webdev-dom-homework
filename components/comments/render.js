@@ -9,6 +9,7 @@ export const renderComments = (app, comments) => {
     .map((comment) => {
       const newComment = document.createElement('li');
       newComment.classList.add('comment');
+      console.log(comment);
 
       const likeButtonClass = comment.liked
         ? 'like-button -active-like'
@@ -17,7 +18,7 @@ export const renderComments = (app, comments) => {
       const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
       return `<li class='comment' data-comment-id="${comment.id}">
             <div class="comment-header">
-              <div>${escapeHtml(comment.name)}</div>
+              <div>${comment.name}</div>
               <div>${dateAndTime}</div>
             </div>
             <div class="comment-body">
