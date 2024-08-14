@@ -1,21 +1,20 @@
-import { setComments } from "./components/comments/index.js";
-import { getToken } from "./main.js";
+import { setComments } from './components/comments/index.js';
+import { getToken } from './main.js';
 
-const host = "https://wedev-api.sky.pro/api/v2/kristina-sapega/comments";
-
+const host = 'https://wedev-api.sky.pro/api/v2/kristina-sapega/comments';
 
 export const getCommentsRequest = async (token) => {
   const response = await fetch(host, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token?.token}`,
-    }
+    },
   });
   if (response.status === 401) {
     throw new Error('Ошибка при авторизвции');
   }
   if (response.status === 500) {
-    throw new Error("Произошла ошибка сервера");
+    throw new Error('Произошла ошибка сервера');
   }
   const responseData = await response.json();
   const appComments = responseData.comments.map((comment) => {
@@ -30,7 +29,7 @@ export const getCommentsRequest = async (token) => {
   });
 
   setComments(appComments);
-  console.log (appComments)
+  console.log(appComments);
   return appComments;
 };
 
@@ -51,13 +50,12 @@ export const addCommentRequest = async ({ text }) => {
   return await response.json();
 };
 
-
 export function loginUser({ login, password }) {
-  return fetch(" https://wedev-api.sky.pro/api/user/login", {
-    method: "POST",
+  return fetch(' https://wedev-api.sky.pro/api/user/login', {
+    method: 'POST',
     body: JSON.stringify({
       login,
-      password
+      password,
     }),
   }).then((response) => {
     if (response.status === 400) {
@@ -66,49 +64,46 @@ export function loginUser({ login, password }) {
       return response.json();
     }
   });
-};
-
+}
 
 export function registerUser({ name, login, password }) {
-  return fetch("https://wedev-api.sky.pro/api/user", {
+  return fetch('https://wedev-api.sky.pro/api/user', {
     method: 'POST',
     body: JSON.stringify({
       name,
       login,
-      password
+      password,
     }),
   }).then((response) => {
     if (response.status === 400) {
-      throw new Error("Пользователь с таким логином уже сущетсвует");
+      throw new Error('Пользователь с таким логином уже сущетсвует');
     } else {
       return response.json();
     }
   });
-};
-
+}
 
 export async function toggleLike(commentId) {
   const response = await fetch(`${host}/${commentId}/toggle-like`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${getToken()}`,
-    }
+    },
   });
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   const result = await response.json();
   return result;
-};
+}
 
-
-export async function deleteComment({id, token}) {
+export async function deleteComment({ id, token }) {
   const response = await fetch(`${host}/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
-    }
-    });
+    },
+  });
   if (response.status === 401) {
     throw new Error('Ошибка авторизации');
   } else if (response.status === 500) {
@@ -116,7 +111,5 @@ export async function deleteComment({id, token}) {
   } else if (response.status === 404) {
     throw new Error('Комментарий не найден');
   }
-    return response.json();
-  }
-
-
+  return response.json();
+}
