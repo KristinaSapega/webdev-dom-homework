@@ -1,6 +1,7 @@
 import { addCommentRequest, getCommentsRequest } from "../../api.js";
 import { getToken, token } from "../../main.js";
 import { commentsList } from "./list.js";
+import { format } from "https://cdn.jsdelivr.net/npm/date-fns@3.6.0/+esm";
 
 function escapeHtml(unsafe) {
     return unsafe
@@ -56,8 +57,9 @@ export function renderAddCommentForm(app) {
 
         // Создание нового комментария
         const now = new Date();
-        const dateString = `${now.getDate()}.${now.getMonth() + 1
-            }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+        const dateString = format(now, 'yyyy-MM-dd HH.mm.ss');
+        // const dateString = `${now.getDate()}.${now.getMonth() + 1
+        //     }.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
 
         const newComment = {
             name: nameInput.value,

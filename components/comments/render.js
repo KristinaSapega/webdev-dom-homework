@@ -2,6 +2,7 @@ import { deleteComment } from "../../api.js";
 import { toggleLike } from "../../api.js";
 import { getToken, token } from "../../main.js";
 import { getComments, comments as renderCom} from "./index.js";
+import { format } from "https://cdn.jsdelivr.net/npm/date-fns@3.6.0/+esm";
 
 
 export const renderComments = (app, comments) => {
@@ -15,7 +16,9 @@ export const renderComments = (app, comments) => {
         ? 'like-button -active-like'
         : 'like-button';
 
-      const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
+      const dateAndTime = 
+      format (new Date (comment.date), 'yyyy-MM-dd HH.mm.ss');
+      //  `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
       return `<li class='comment' data-comment-id="${comment.id}">
             <div class="comment-header">
               <div>${comment.name}</div>
