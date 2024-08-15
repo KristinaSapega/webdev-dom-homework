@@ -1,16 +1,22 @@
+import { deleteComment } from "../../api.js";
+import { toggleLike } from "../../api.js";
+import { getToken, token } from "../../main.js";
+import { getComments, comments as renderCom} from "./index.js";
 
 
 export const renderComments = (app, comments) => {
-
   app.innerHTML = comments
     .map((comment) => {
-      // const newComment = document.createElement('li');
-      // newComment.classList.add('comment');
+      const newComment = document.createElement('li');
+      newComment.classList.add('comment');
+      console.log(comment);
 
-      const likeButtonClass = comment.liked ? 'like-button -active-like' : 'like-button';
+      const likeButtonClass = comment.liked
+        ? 'like-button -active-like'
+        : 'like-button';
 
       const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
-      return `<li class='comment'>
+      return `<li class='comment' data-comment-id="${comment.id}">
             <div class="comment-header">
               <div>${comment.name}</div>
               <div>${dateAndTime}</div>
@@ -27,52 +33,77 @@ export const renderComments = (app, comments) => {
                 <div class="edit-buttons">
             <button class="edit-button" data-comment-id="${comment.id}">Редактировать</button>
               </div>
+              <div class="delete-buttons">
+            <button class="delete-button" data-comment-id="${comment.id}">Удалить</button>
+              </div>
             </div>
            </li>
           `;
     })
-    .join('');
+    .join("");
 
+  if (token) {
+    replyInitEvent();
+    likeInitEvent(comments);
+    deleteEventInit();
+  }
 };
-// Задаем обработчики для взаимодействия с комментом
-//replyInitEvent(newComment, comment);
-//likeInitEvent(comments);
 
-
-// Ответ на коммент
-function replyInitEvent(newComment, comment) {
-  newComment.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const nameInput = document.querySelector('#name-input');
-    const commentInput = document.querySelector('#comment-input');
-    // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
-    nameInput.value = '';
-    commentInput.value = `@${comment.name}, ${comment.text}:`;
-    commentInput.focus();
-  });
-}
-// Лайк
-function likeInitEvent(comments) {
-  const likeButtons = document.querySelectorAll('.like-button');
-  likeButtons.forEach((button) => {
-    button.addEventListener('click', (event) => {
+function deleteEventInit() {
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event) => {
       event.stopPropagation();
-
-      const commentId = parseInt(button.dataset.commentId);
-      const comment = comments.find((c) => c.id === commentId);
-
-      if (comment.liked) {
-        comment.likes--;
-      } else {
-        comment.likes++;
+      const commentId = button.getAttribute('data-comment-id');
+      try {
+        await deleteComment({ id: commentId, token: getToken() });
+        // Обновляем список комментариев после удаления
+        renderCom(token);
+      } catch (error) {
+        console.error('Ошибка при удалении комментария:', error);
       }
-      
-      comment.liked = !comment.liked;
-      // Обновляем список комментариев на странице
-
-      const commentsList = document.querySelector('.comments');
-
-      renderComments(commentsList, comments);
     });
   });
 }
+
+export function replyInitEvent() {
+  const comments = document.querySelectorAll('.comment')
+  //console.log(comments)
+  for (const comment of comments) {
+    console.log(comment)
+    comment.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const id = comment.dataset.commentId;
+      const data = getComments();
+      const currentComment = data.find((comment) => comment.id === id);
+      const commentInput = document.querySelector('#comment-input');
+      // При клике на комментарий, заполняем поля формы добавления комментария данными комментария
+      commentInput.value = `@${currentComment.name}, ${currentComment.text}:`;
+      commentInput.focus();
+    });
+  }
+}
+
+function likeInitEvent(_comments) {
+  const likeButtons = document.querySelectorAll('.like-button');
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      const commentId = button.dataset.commentId;
+
+      try {
+        await toggleLike(commentId);
+
+        renderCom(token);
+      } catch (error) {
+        console.error('Ошибка при переключении лайка:', error);
+      }
+
+    });
+  });
+}
+
+
+
+
+
