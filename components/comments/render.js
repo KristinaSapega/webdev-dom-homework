@@ -1,8 +1,8 @@
-export const renderComments = (commentsList, comments) => {
-  console.log(comments);
 
 
-  commentsList.innerHTML = comments
+export const renderComments = (app, comments) => {
+
+  app.innerHTML = comments
     .map((comment) => {
       // const newComment = document.createElement('li');
       // newComment.classList.add('comment');
@@ -33,10 +33,11 @@ export const renderComments = (commentsList, comments) => {
     })
     .join('');
 
-  // Задаем обработчики для взаимодействия с комментом
-  //replyInitEvent(newComment, comment);
-  likeInitEvent(comments);
 };
+// Задаем обработчики для взаимодействия с комментом
+//replyInitEvent(newComment, comment);
+//likeInitEvent(comments);
+
 
 // Ответ на коммент
 function replyInitEvent(newComment, comment) {
@@ -65,6 +66,7 @@ function likeInitEvent(comments) {
       } else {
         comment.likes++;
       }
+      
       comment.liked = !comment.liked;
       // Обновляем список комментариев на странице
 
