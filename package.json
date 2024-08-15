@@ -7,14 +7,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write './components/**/*.{js,jsx}' './api.js' './main.js'",
-    "lint:js": "eslint './components/**/*.{js,jsx}' './api.js' './main.js'"
+    "lint:js": "eslint './components/**/*.{js,jsx}' './api.js' './main.js'",
+    "prepare": "mkdir -p .husky && echo '#!/bin/sh\n. \"$(dirname \"$0\")/_/husky.sh\"' > .husky/_/husky.sh"
   },
+
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+   "author": "",
+   "license": "ISC",
+
   "dependencies": {
     "date-fns": "^3.6.0"
   },
+
   "devDependencies": {
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
