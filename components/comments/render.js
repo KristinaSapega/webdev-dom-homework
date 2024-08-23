@@ -1,8 +1,8 @@
-import { deleteComment } from "../../api.js";
-import { toggleLike } from "../../api.js";
-import { getToken, token } from "../../main.js";
-import { getComments, comments as renderCom} from "./index.js";
-
+import { deleteComment } from '../../api.js';
+import { toggleLike } from '../../api.js';
+import { getToken, token } from '../../main.js';
+import { getComments, comments as renderCom } from './index.js';
+import { format } from 'https://cdn.jsdelivr.net/npm/date-fns@3.6.0/+esm';
 
 export const renderComments = (app, comments) => {
   app.innerHTML = comments
@@ -15,7 +15,8 @@ export const renderComments = (app, comments) => {
         ? 'like-button -active-like'
         : 'like-button';
 
-      const dateAndTime = `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
+      const dateAndTime = format(new Date(comment.date), 'yyyy-MM-dd HH.mm.ss');
+      //  `${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}`;
       return `<li class='comment' data-comment-id="${comment.id}">
             <div class="comment-header">
               <div>${comment.name}</div>
@@ -40,7 +41,7 @@ export const renderComments = (app, comments) => {
            </li>
           `;
     })
-    .join("");
+    .join('');
 
   if (token) {
     replyInitEvent();
@@ -51,7 +52,7 @@ export const renderComments = (app, comments) => {
 
 function deleteEventInit() {
   const deleteButtons = document.querySelectorAll('.delete-button');
-  deleteButtons.forEach(button => {
+  deleteButtons.forEach((button) => {
     button.addEventListener('click', async (event) => {
       event.stopPropagation();
       const commentId = button.getAttribute('data-comment-id');
@@ -67,10 +68,10 @@ function deleteEventInit() {
 }
 
 export function replyInitEvent() {
-  const comments = document.querySelectorAll('.comment')
+  const comments = document.querySelectorAll('.comment');
   //console.log(comments)
   for (const comment of comments) {
-    console.log(comment)
+    console.log(comment);
     comment.addEventListener('click', (event) => {
       event.stopPropagation();
       const id = comment.dataset.commentId;
@@ -98,12 +99,6 @@ function likeInitEvent(_comments) {
       } catch (error) {
         console.error('Ошибка при переключении лайка:', error);
       }
-
     });
   });
 }
-
-
-
-
-
